@@ -6,13 +6,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <body>
     <div class="panel">
+        <img src="https://openhacks.azurewebsites.net/Images/microsoft/open-hack-logo.jpg" class="logoOpenHack"/>
         <div class="server-status">
             Server Status:
             <span id="txtServerStatus"></span>
             <div id="serverData">
-                &Uacute;ltimo update:<span id="txtUltimoUpdate"></span><br />
-                &Uacute;ltimo online:<span id="txtUltimoOnline"></span><br />
-                Usuários online:<span id="txtUsers"></span>
+                Last update:<span id="txtUltimoUpdate"></span><br />
+                Last online:<span id="txtUltimoOnline"></span><br />
+                Online users:<span id="txtUsers"></span>
             </div>
         </div>
     </div>
@@ -23,33 +24,30 @@
 
 
     <div class="panel">
-        <input />
+        <input type="button" onclick="showPopUpNewInstace()" value="Add Instance" class="btn" />
         <table id="tbServers" class="tableServer">
             <thead>
                 <tr>
                     <td>Name</td>
                     <td>IP</td>
                     <td>RCON</td>
+                    <td>Del</td>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>tenant1</td>
-                    <td>123.123.123123</td>
-                    <td>123.123.123123</td>
-                </tr>
-                <tr>
-                    <td>tenant1</td>
-                    <td>123.123.123123</td>
-                    <td>123.123.123123</td>
-                </tr>
-                <tr>
-                    <td>tenant1</td>
-                    <td>123.123.123123</td>
-                    <td>123.123.123123</td>
-                </tr>
+            <tbody id="lstServers">
+             
             </tbody>
         </table>
+    </div>
+
+    <div id="divPopNovo" class="newInstancePopUp">
+        <div class="newInstancePopUpPanel">
+            Instance name
+            <input type="text" placeholder="Name" id="txtInstanceName" class="input" />
+            <input type="button" onclick="addInstance()" class="btn" value="Add" />
+            <input type="button" onclick="closePopUpNewInstance()" class="btn" value="Cancel" />
+
+        </div>
     </div>
 </body>
 
@@ -62,13 +60,13 @@
 
             function (err, status) {
                 if (err) {
-                    $("#txtServerStatus").html('Falha ao recuperar dados!');
+                    $("#txtServerStatus").html('Connection Failed!');
                     return;
                 }
 
                 // you can change these to your own message!
 
-                $("#txtServerStatus").html(status.online ? 'On-line' : 'Parado');
+                $("#txtServerStatus").html(status.online ? 'Online' : 'Stoped');
 
                 if (status.online) {
                     $("#txtUsers").html(status.players.now + "/" + status.players.max);
@@ -112,7 +110,7 @@
             // These labels appear in the legend and in the tooltips when hovering different arcs
             labels: [
                 'Online',
-                'Disponível'
+                'Slots available'
             ]
         };
 
@@ -130,6 +128,39 @@
             }
         });
     }
+
+    function showPopUpNewInstace() {
+        $("#divPopNovo").toggle();
+        
+    }
+
+    function closePopUpNewInstance() {
+        $("#txtInstanceName").val('');
+        $("#divPopNovo").toggle();
+    }
+
+    function addInstance() {
+        var name = $("#txtInstanceName").val();
+
+        loadServerList();
+        closePopUpNewInstance();
+    }
+
+    function loadServerList() {
+        var x = "";
+        for (i = 0; i <= 5; i++) {
+      
+            x += "<tr>";
+            x += " <td>tenant" + i + "</td>";
+            x += "<td>" + i + "</td>";
+            x += "<td>" + i + "</td>";
+            x += "<td>" + i + "</td>";
+            x += "</tr>";
+        }
+        $("#lstServers").html(x);
+    }
+
+    loadServerList();
 
     getServerStatus();
 </script>
