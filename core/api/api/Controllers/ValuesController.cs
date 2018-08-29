@@ -26,7 +26,25 @@ namespace api.Controllers
         [HttpGet]
         public ActionResult Get()
         {
-            
+            //String fileStr = System.IO.File.ReadAllText(@"C:\Users\wadmin\Documents\Visual Studio 2017\Projects\minecraftK8sAdminAPI\minecraftK8sAdminAPI\services.json");
+
+            //JObject o = JObject.Parse(fileStr);
+
+            //foreach (var itemJson in o.SelectTokens("$.items[*]"))
+            //{
+            //    string tenant = itemJson.SelectToken("$.metadata.name").ToString();
+            //    if (tenant != "kubernetes")
+            //    {
+            //        JToken ipJson = itemJson.SelectToken("$.status.loadBalancer.ingress[0].ip");
+            //        if (ipJson != null)
+            //        {
+            //            string ip = ipJson.ToString();
+            //        }
+            //    }
+
+            //}
+
+
             return Ok();
         }
         
