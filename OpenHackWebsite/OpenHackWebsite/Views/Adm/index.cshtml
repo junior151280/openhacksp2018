@@ -1,0 +1,104 @@
+<script src="https://mcapi.us/scripts/minecraft.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+<link href="../css/style.css" rel="stylesheet" />
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<body>
+    <div class="panel">
+        <div class="server-status">
+            Server Status:
+            <span id="txtServerStatus"></span>
+            <div id="serverData">
+                &Uacute;ltimo update:<span id="txtUltimoUpdate"></span><br />
+                &Uacute;ltimo online:<span id="txtUltimoOnline"></span><br />
+                Usuários online:<span id="txtUsers"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <canvas id="myChart" class="graficoOnline"></canvas>
+    </div>
+</body>
+
+
+
+<script>
+    var serverIP = "137.117.88.118";
+    function getServerStatus() {
+        MinecraftAPI.getServerStatus(serverIP, { port: 25565 },
+
+            function (err, status) {
+                if (err) {
+                    $("#txtServerStatus").html('Falha ao recuperar dados!');
+                    return;
+                }
+
+                // you can change these to your own message!
+
+                $("#txtServerStatus").html(status.online ? 'On-line' : 'Parado');
+
+                if (status.online) {
+                    $("#txtUsers").html(status.players.now + "/" + status.players.max);
+
+                
+
+                    $("#txtUltimoUpdate").html(getDateUnixStr(status.last_updated));
+
+                    $("#txtUltimoOnline").html(getDateUnixStr(status.last_online));
+
+                    gerarGrafico(status.players.now, status.players.max - status.players.now);
+                }
+            });
+    }
+
+    function getDateUnixStr(unixStr) {
+        var date = new Date(unixStr * 1000);
+        var hours = date.getHours();
+        var minutes = "0" + date.getMinutes();
+        var seconds = "0" + date.getSeconds();
+        return hours + ":" + minutes + ":" + seconds
+    }
+
+    function gerarGrafico(logados, disponivel) {
+        var ctx = document.getElementById("myChart");
+
+        data = {
+            datasets: [{
+                data: [logados, disponivel],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)'
+                ],
+                borderWidth: 1
+            }],
+
+            // These labels appear in the legend and in the tooltips when hovering different arcs
+            labels: [
+                'Online',
+                'Disponível'
+            ]
+        };
+
+        var myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: data,
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    }
+
+    getServerStatus();
+</script>

@@ -1,0 +1,19 @@
+﻿body {
+    background-color:#efefef;
+    margin:20px;
+}
+
+
+.panel {
+    background-color:#fff;
+    width:500px;
+    margin:10px auto;
+    border-radius:5px;
+    padding:20px;
+    box-shadow:1px 1px 1px #808080;
+}
+
+.graficoOnline {
+    width: 300px;
+    margin: auto;
+}
