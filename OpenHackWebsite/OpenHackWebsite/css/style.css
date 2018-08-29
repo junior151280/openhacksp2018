@@ -1,6 +1,7 @@
 ﻿body {
-    background-color:#efefef;
-    margin:20px;
+    background-color: #efefef;
+    margin: 20px;
+    font-family: Sans-serif;
 }
 
 
@@ -16,4 +17,17 @@
 .graficoOnline {
     width: 300px;
     margin: auto;
+}
+
+.btn {
+
+}
+
+.tableServer {
+    width:100%;
+}
+
+th, td {
+    border: 0px;
+    border-bottom: 1px solid #ddd;
 }
