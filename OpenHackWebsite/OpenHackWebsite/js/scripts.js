@@ -1,4 +1,6 @@
 ﻿var serverIP = "137.117.88.118";
+var urlApi = "https://openhackteamone-api.azurewebsites.net/";
+
 function getServerStatus(ip) {
 
     MinecraftAPI.getServerStatus(serverIP, { port: 25565 },
@@ -96,12 +98,29 @@ function addInstance() {
 }
 
 function loadServerList() {
-    var rows;
-    for (i = 0; i <= 4; i++) 
-        rows += getRow("tenant " + i, "192.168.1.3" + i, "192.168.1.3" + i)
+    debugger
+    $.ajax({
+        method: "GET",
+        url: urlApi + "instances",
+        //data: {  },
+        success: function (result) {
+            debugger
+            var rows;
+            //for (i = 0; i <= 4; i++)
+            //    rows += getRow("tenant " + i, "192.168.1.3" + i, "192.168.1.3" + i)
 
-    $("#lstServers").html(rows);
-    $("#txtLastUpdateList").html("Server list updated at " + getDateTime(new Date()))
+            for (i = 0; i < result.lengh; i++)
+                rows += getRow(result[i].name, result[i].endpoints.minecraft, result[i].endpoints.rcon);
+
+            $("#lstServers").html(rows);
+            $("#txtLastUpdateList").html("Server list updated at " + getDateTime(new Date()))
+        },
+        error: function (x,y,z) {
+            $("#txtLastUpdateList").html("Access API fail")
+        }
+    })
+
+  
 }
 
 function getRow(name, ip, rcon) {
