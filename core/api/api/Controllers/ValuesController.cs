@@ -1,76 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using api.Helpers;
+using api.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Management.Fluent;
-using Microsoft.Azure.Management.ResourceManager.Fluent;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/instances")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
         private readonly CustomSettings _settings;
+        private readonly KubernetesApi _api;
         public ValuesController(IOptions<CustomSettings> settings)
         {
             _settings = settings.Value;
+            _api = new KubernetesApi(_settings.ApiBaseUrl, _settings.Authorization);
         }
-        
-        // GET api/values
+
         [HttpGet]
-        public ActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            //String fileStr = System.IO.File.ReadAllText(@"C:\Users\wadmin\Documents\Visual Studio 2017\Projects\minecraftK8sAdminAPI\minecraftK8sAdminAPI\services.json");
-
-            //JObject o = JObject.Parse(fileStr);
-
-            //foreach (var itemJson in o.SelectTokens("$.items[*]"))
-            //{
-            //    string tenant = itemJson.SelectToken("$.metadata.name").ToString();
-            //    if (tenant != "kubernetes")
-            //    {
-            //        JToken ipJson = itemJson.SelectToken("$.status.loadBalancer.ingress[0].ip");
-            //        if (ipJson != null)
-            //        {
-            //            string ip = ipJson.ToString();
-            //        }
-            //    }
-
-            //}
-
-
-            return Ok();
-        }
-        
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult Get(int id)
-        {
-            return Ok();
+            var instances = await _api.GetAsync("api/v1/namespaces/default/services");
+            return Ok(instances);
         }
 
-        // POST api/values
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post([FromBody] string name)
         {
+            var response = await _api.PostAsync("apis/apps/v1/namespaces/default/deployments", name);
+            return Ok(response);
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpDelete("{name}")]
+        public async Task<IActionResult> Delete(string name)
         {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            var response = await _api.DeleteAsync($"apis/apps/v1/namespaces/default/deployments/{name}");
+            return Ok(response);
         }
     }
 }
