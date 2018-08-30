@@ -29,9 +29,11 @@ namespace api
             services.Configure<CustomSettings>(options => Configuration.GetSection("CustomSettings").Bind(options));
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader();
+                builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials();
             }));
         }
         
@@ -43,8 +45,8 @@ namespace api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
             app.UseCors("MyPolicy");
+            app.UseMvc();
         }
     }
 }
