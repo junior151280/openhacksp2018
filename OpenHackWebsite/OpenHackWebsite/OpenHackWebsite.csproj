@@ -98,7 +98,7 @@
     <Content Include="Global.asax" />
     <None Include="nuget.config" />
     <None Include="Properties\PublishProfiles\openhackteamone-prd - Web Deploy.pubxml" />
-    <None Include="Views\Adm\index.cshtml" />
+    <Content Include="Views\Adm\index.cshtml" />
     <Content Include="js\scripts.js" />
     <Content Include="Web.config" />
   </ItemGroup>
