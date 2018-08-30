@@ -44,7 +44,7 @@ namespace api
             }
 
             app.UseMvc();
-            app.UseCors();
+            app.UseCors("MyPolicy");
         }
     }
 }

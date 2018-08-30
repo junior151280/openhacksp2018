@@ -14,13 +14,14 @@ namespace api.Controllers
         public ValuesController(IOptions<CustomSettings> settings)
         {
             _settings = settings.Value;
-            _api = new KubernetesApi(_settings.ApiBaseUrl, _settings.Authorization);
+            _api = new KubernetesApi(_settings.ApiBaseUrl, _settings.Authorization, _settings.Namespace);
         }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var instances = await _api.GetAsync("api/v1/namespaces/default/services");
+            string nspace = _settings.Namespace;
+            var instances = await _api.GetAsync($"api/v1/namespaces/{nspace}/services");
             return Ok(instances);
         }
 
@@ -31,10 +32,10 @@ namespace api.Controllers
             return Ok(response);
         }
 
-        [HttpDelete("{name}")]
+        [HttpDelete]
         public async Task<IActionResult> Delete([FromBody] string name)
         {
-            var response = await _api.DeleteAsync($"apis/apps/v1/namespaces/default/deployments/{name}");
+            var response = await _api.DeleteAsync(name);
             return Ok(response);
         }
     }
