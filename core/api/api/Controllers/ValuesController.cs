@@ -32,7 +32,7 @@ namespace api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] string name)
         {
-            var response = await _api.PostAsync("apis/apps/v1/namespaces/default/deployments", name);
+            var response = await _api.PostAsync(name);
             return Ok(response);
         }
 

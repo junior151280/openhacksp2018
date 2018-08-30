@@ -67,7 +67,7 @@ namespace api.Helpers
             return instances;
         }
 
-        public async Task<string> PostAsync(string method, string name)
+        public async Task<string> PostAsync(string name)
         {
             using (_handler = new HttpClientHandler())
             {
@@ -78,16 +78,32 @@ namespace api.Helpers
                     _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/yaml"));
                     _client.DefaultRequestHeaders.Add("Authorization", _auth);
 
-                    var fullApiCall = $"{_urlBase}{method}";
-                    var label = name.Replace("deployment-", "");
-                    var yamlBody = $"apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: {name}\n  labels:\n    app: {label}\nspec:\n  replicas: 1\n  selector:\n    matchLabels:\n      app: {label}\n  template:\n    metadata:\n      labels:\n        app: {label}\n    spec:\n      containers:\n      - name: {label}\n        image: openhack/minecraft-server:1.0\n        env:\n        - name: EULA\n          value: \"TRUE\"\n        ports:\n        - containerPort: 25565\n        - containerPort: 25575\n        volumeMounts:\n        - mountPath: /data\n          name: minecraft-volume\n      volumes:\n      - name: minecraft-volume\n        hostPath:\n          # directory location on host\n          path: /minecraft/data\n          # this field is optional\n          type: DirectoryOrCreate";
-                    var content = new StringContent(yamlBody, Encoding.UTF8, "application/yaml");
+                    var deploymentResponse = await DeploymentCreate(name);
+                    var serviceResponse = await ServiceCreate(name);
 
-                    var response = await _client.PostAsync(fullApiCall, content);
-
-                    return await response.Content.ReadAsStringAsync();
+                    return $"{deploymentResponse} \n\n {serviceResponse}";
                 }
             }
+        }
+
+        private async Task<string> DeploymentCreate(string name)
+        {
+            var deploymentCreateMethod = "apis/apps/v1/namespaces/default/deployments";
+            var deploymentFullCall = $"{_urlBase}{deploymentCreateMethod}";
+            var yamlBody = $"apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: {name}\n  labels:\n    app: {name}\nspec:\n  replicas: 1\n  selector:\n    matchLabels:\n      app: {name}\n  template:\n    metadata:\n      labels:\n        app: {name}\n    spec:\n      containers:\n      - name: {name}\n        image: openhack/minecraft-server:1.0\n        env:\n        - name: EULA\n          value: \"TRUE\"\n        ports:\n        - containerPort: 25565\n        - containerPort: 25575\n        volumeMounts:\n        - mountPath: /data\n          name: minecraft-volume\n      volumes:\n      - name: minecraft-volume\n        hostPath:\n          # directory location on host\n          path: /minecraft/data\n          # this field is optional\n          type: DirectoryOrCreate";
+            var content = new StringContent(yamlBody, Encoding.UTF8, "application/yaml");
+            var deploymentResponse = await _client.PostAsync(deploymentFullCall, content);
+            return await deploymentResponse.Content.ReadAsStringAsync();
+        }
+
+        private async Task<string> ServiceCreate(string name)
+        {
+            var serviceCreateMethod = "api/v1/namespaces/default/services";
+            var serviceFullCall = $"{_urlBase}{serviceCreateMethod}";
+            var yamlBody = $"kind: Service\napiVersion: v1\nmetadata:\n  name: {name}\nspec:\n  selector:\n    app: {name}\n  type: LoadBalancer\n  ports:\n  - protocol: TCP\n    name: \"server\"\n    port: 25565\n    targetPort: 25565\n  - protocol: TCP\n    name: \"rcon\"\n    port: 25575\n    targetPort: 25575";
+            var content = new StringContent(yamlBody, Encoding.UTF8, "application/yaml");
+            var serviceResponse = await _client.PostAsync(serviceFullCall, content);
+            return await serviceResponse.Content.ReadAsStringAsync();
         }
 
         public async Task<string> DeleteAsync(string method)
