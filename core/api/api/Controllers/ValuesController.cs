@@ -1,12 +1,7 @@
-﻿using System.IO;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using api.Helpers;
-using api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace api.Controllers
 {
@@ -37,7 +32,7 @@ namespace api.Controllers
         }
 
         [HttpDelete("{name}")]
-        public async Task<IActionResult> Delete(string name)
+        public async Task<IActionResult> Delete([FromBody] string name)
         {
             var response = await _api.DeleteAsync($"apis/apps/v1/namespaces/default/deployments/{name}");
             return Ok(response);

@@ -1,5 +1,4 @@
 ﻿using api.Models;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -41,6 +40,47 @@ namespace api.Helpers
                 }
             }
         }
+        public async Task<string> PostAsync(string name)
+        {
+            using (_handler = new HttpClientHandler())
+            {
+                _handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
+                using (_client = new HttpClient(_handler))
+                {
+                    _client.DefaultRequestHeaders.Accept.Clear();
+                    _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/yaml"));
+                    _client.DefaultRequestHeaders.Add("Authorization", _auth);
+
+                    var deploymentResponse = await DeploymentCreate(name);
+                    var serviceResponse = await ServiceCreate(name);
+
+                    return $"{deploymentResponse} \n\n {serviceResponse}";
+                }
+            }
+        }
+        public async Task<string> DeleteAsync(string name)
+        {
+            using (_handler = new HttpClientHandler())
+            {
+                _handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
+                using (_client = new HttpClient(_handler))
+                {
+                    _client.DefaultRequestHeaders.Accept.Clear();
+                    _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    _client.DefaultRequestHeaders.Add("Authorization", _auth);
+
+                    string deployUrl = $"apis/apps/v1/namespaces/default/deployments/{name}";
+                    string fullApiCall = $"{_urlBase}{deployUrl}";
+                    var deployResponse = await DeleteMethod(fullApiCall);
+
+                    deployUrl = $"api/v1/namespaces/default/services/{name}";
+                    fullApiCall = $"{_urlBase}{deployUrl}";
+                    var serviceResponse = await DeleteMethod(fullApiCall);
+
+                    return $"{deployResponse} \n\n {serviceResponse}";
+                }
+            }
+        }
 
         private List<Instance> Parse(string json)
         {
@@ -66,26 +106,6 @@ namespace api.Helpers
             }
             return instances;
         }
-
-        public async Task<string> PostAsync(string name)
-        {
-            using (_handler = new HttpClientHandler())
-            {
-                _handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
-                using (_client = new HttpClient(_handler))
-                {
-                    _client.DefaultRequestHeaders.Accept.Clear();
-                    _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/yaml"));
-                    _client.DefaultRequestHeaders.Add("Authorization", _auth);
-
-                    var deploymentResponse = await DeploymentCreate(name);
-                    var serviceResponse = await ServiceCreate(name);
-
-                    return $"{deploymentResponse} \n\n {serviceResponse}";
-                }
-            }
-        }
-
         private async Task<string> DeploymentCreate(string name)
         {
             var deploymentCreateMethod = "apis/apps/v1/namespaces/default/deployments";
@@ -95,7 +115,6 @@ namespace api.Helpers
             var deploymentResponse = await _client.PostAsync(deploymentFullCall, content);
             return await deploymentResponse.Content.ReadAsStringAsync();
         }
-
         private async Task<string> ServiceCreate(string name)
         {
             var serviceCreateMethod = "api/v1/namespaces/default/services";
@@ -106,24 +125,11 @@ namespace api.Helpers
             return await serviceResponse.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> DeleteAsync(string method)
+        private async Task<string> DeleteMethod(string apiUrl)
         {
-            using (_handler = new HttpClientHandler())
-            {
-                _handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
-                using (_client = new HttpClient(_handler))
-                {
-                    _client.DefaultRequestHeaders.Accept.Clear();
-                    _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    _client.DefaultRequestHeaders.Add("Authorization", _auth);
-                    
-                    string fullApiCall = $"{_urlBase}{method}";
-
-                    var response = await _client.DeleteAsync(fullApiCall);
-
-                    return await response.Content.ReadAsStringAsync();
-                }
-            }
+            var response = await _client.DeleteAsync(apiUrl);
+            return await response.Content.ReadAsStringAsync();
         }
+
     }
 }
