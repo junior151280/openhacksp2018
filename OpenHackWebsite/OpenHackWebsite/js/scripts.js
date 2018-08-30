@@ -1,5 +1,5 @@
 ﻿var serverIP = "137.117.88.118";
-var urlApi = "https://openhackteamone-api.azurewebsites.net/";
+var urlApi = "https://openhackteamone-api.azurewebsites.net/api/";
 
 function getServerStatus(ip) {
 
@@ -98,10 +98,12 @@ function addInstance() {
 }
 
 function loadServerList() {
-    debugger
+
     $.ajax({
-        method: "GET",
-        url: urlApi + "instances",
+        type: "GET",
+        contentType: "application/json; charset=utf-8",
+        url: "https://openhackteamone-api.azurewebsites.net/api/instances",//urlApi + "instances",
+        //dataType: 'json',
         //data: {  },
         success: function (result) {
             debugger
