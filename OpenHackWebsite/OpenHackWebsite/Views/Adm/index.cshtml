@@ -1,25 +1,29 @@
-<script src="https://mcapi.us/scripts/minecraft.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
-<link href="../css/style.css" rel="stylesheet" />
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<body>
-    <div class="panel">
-        <img src="https://openhacks.azurewebsites.net/Images/microsoft/open-hack-logo.jpg" class="logoOpenHack"/>
-        <div class="server-status">
-            Server Status:
-            <span id="txtServerStatus"></span>
-            <div id="serverData">
-                Last update:<span id="txtUltimoUpdate"></span><br />
-                Last online:<span id="txtUltimoOnline"></span><br />
-                Online users:<span id="txtUsers"></span>
-            </div>
-        </div>
-    </div>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <script src="https://mcapi.us/scripts/minecraft.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+    <script src="~/js/scripts.js"></script>
+    <link href="~/css/style.css" rel="stylesheet" />
+    
 
-    <div class="panel">
-        <canvas id="myChart" class="graficoOnline"></canvas>
+
+    <script>
+        $(document).ready(function () {
+            loadServerList();
+        });
+        
+    </script>
+
+</head>
+
+
+
+<body>
+    <div class="panel header">
+        <img src="https://openhacks.azurewebsites.net/Images/microsoft/open-hack-logo.jpg" class="logoOpenHack" />
     </div>
 
 
@@ -28,139 +32,41 @@
         <table id="tbServers" class="tableServer">
             <thead>
                 <tr>
-                    <td>Name</td>
-                    <td>IP</td>
-                    <td>RCON</td>
-                    <td>Del</td>
+                    <th>Name</th>
+                    <th>IP</th>
+                    <th>RCON</th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
-            <tbody id="lstServers">
-             
-            </tbody>
+            <tbody id="lstServers"></tbody>
         </table>
     </div>
 
-    <div id="divPopNovo" class="newInstancePopUp">
+    <div id="graphicPopUp" class="bgPopUp" style="display:none">
+        <div class="graphicPopUpPanel">
+            <div class="server-status">
+                Server Status:
+                <span id="txtServerStatus"></span>
+                <div id="serverData">
+                    Last update:<span id="txtUltimoUpdate"></span><br />
+                    Last online:<span id="txtUltimoOnline"></span><br />
+                    Online users:<span id="txtUsers"></span>
+                </div>
+            </div>
+            <canvas id="myChart" class="graficoOnline"></canvas>
+        </div>
+    </div>
+
+    <div id="newInstancePopUp" class="bgPopUp" style="display:none">
         <div class="newInstancePopUpPanel">
-            Instance name
-            <input type="text" placeholder="Name" id="txtInstanceName" class="input" />
+            <input type="text" placeholder="Instance name" id="txtInstanceName" class="input" />
+            <br /><br />
             <input type="button" onclick="addInstance()" class="btn" value="Add" />
             <input type="button" onclick="closePopUpNewInstance()" class="btn" value="Cancel" />
-
         </div>
     </div>
 </body>
 
+</html>
 
-
-<script>
-    var serverIP = "137.117.88.118";
-    function getServerStatus() {
-        MinecraftAPI.getServerStatus(serverIP, { port: 25565 },
-
-            function (err, status) {
-                if (err) {
-                    $("#txtServerStatus").html('Connection Failed!');
-                    return;
-                }
-
-                // you can change these to your own message!
-
-                $("#txtServerStatus").html(status.online ? 'Online' : 'Stoped');
-
-                if (status.online) {
-                    $("#txtUsers").html(status.players.now + "/" + status.players.max);
-
-                
-
-                    $("#txtUltimoUpdate").html(getDateUnixStr(status.last_updated));
-
-                    $("#txtUltimoOnline").html(getDateUnixStr(status.last_online));
-
-                    gerarGrafico(status.players.now, status.players.max - status.players.now);
-                }
-            });
-    }
-
-    function getDateUnixStr(unixStr) {
-        var date = new Date(unixStr * 1000);
-        var hours = date.getHours();
-        var minutes = "0" + date.getMinutes();
-        var seconds = "0" + date.getSeconds();
-        return hours + ":" + minutes + ":" + seconds
-    }
-
-    function gerarGrafico(logados, disponivel) {
-        var ctx = document.getElementById("myChart");
-
-        data = {
-            datasets: [{
-                data: [logados, disponivel],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)'
-                ],
-                borderWidth: 1
-            }],
-
-            // These labels appear in the legend and in the tooltips when hovering different arcs
-            labels: [
-                'Online',
-                'Slots available'
-            ]
-        };
-
-        var myPieChart = new Chart(ctx, {
-            type: 'pie',
-            data: data,
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-                }
-            }
-        });
-    }
-
-    function showPopUpNewInstace() {
-        $("#divPopNovo").toggle();
-        
-    }
-
-    function closePopUpNewInstance() {
-        $("#txtInstanceName").val('');
-        $("#divPopNovo").toggle();
-    }
-
-    function addInstance() {
-        var name = $("#txtInstanceName").val();
-
-        loadServerList();
-        closePopUpNewInstance();
-    }
-
-    function loadServerList() {
-        var x = "";
-        for (i = 0; i <= 5; i++) {
-      
-            x += "<tr>";
-            x += " <td>tenant" + i + "</td>";
-            x += "<td>" + i + "</td>";
-            x += "<td>" + i + "</td>";
-            x += "<td>" + i + "</td>";
-            x += "</tr>";
-        }
-        $("#lstServers").html(x);
-    }
-
-    loadServerList();
-
-    getServerStatus();
-</script>
