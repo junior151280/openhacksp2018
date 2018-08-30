@@ -75,7 +75,7 @@ namespace api.Helpers
                     string fullApiCall = $"{_urlBase}{deployUrl}";
                     var deployResponse = await DeleteMethod(fullApiCall);
 
-                    deployUrl = $"api/v1/namespaces/default/services/{name}";
+                    deployUrl = $"api/v1/namespaces/{_namespace}/services/{name}";
                     fullApiCall = $"{_urlBase}{deployUrl}";
                     var serviceResponse = await DeleteMethod(fullApiCall);
 
