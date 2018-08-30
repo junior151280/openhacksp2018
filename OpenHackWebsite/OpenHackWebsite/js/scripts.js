@@ -96,23 +96,54 @@ function addInstance() {
 }
 
 function loadServerList() {
-    var x = "";
-    for (i = 0; i <= 5; i++) {
+    var rows;
+    for (i = 0; i <= 4; i++) 
+        rows += getRow("tenant " + i, "192.168.1.3" + i, "192.168.1.3" + i)
 
-        x += "<tr>";
-        x += "<td class='fillTable'>tenant" + i + "</td>";
-        x += "<td class='ipTable'>" + i + "</td>";
-        x += "<td class='ipTable'>" + i + "</td>";
-        x += "<td class='icoTable' title='Status'><i class='icoStatus' onclick='showGraphicPopUp(" + i + ")' ></i></td>";
-        x += "<td class='icoTable' title='Remove'><i class='icoDelete' onclick='deleteInstance(" + i + ")'></i></td>";
-        x += "</tr>";
-    }
-    $("#lstServers").html(x);
+    $("#lstServers").html(rows);
+    $("#txtLastUpdateList").html("Server list updated at " + getDateTime(new Date()))
+}
+
+function getRow(name, ip, rcon) {
+
+    var row = "<tr>";
+    row += "<td class='fillTable'>" + name + "</td>";
+    row += "<td class='ipTable'>" + ip + "</td>";
+    row += "<td class='ipTable'>" + rcon + "</td>";
+    row += "<td class='icoTable' title='Status'><i class='icoStatus' onclick='showGraphicPopUp(\"" + ip + "\")' ></i></td>";
+    row += "<td class='icoTable' title='Remove'><i class='icoDelete' onclick='deleteInstance(\"" + name + "\")'></i></td>";
+    row += "</tr>";
+
+    return row;
 }
 
 function deleteInstance(id) {
     alert("deleted: " + id);
 
     loadServerList();
+}
+
+function getDateTime(d) {
+    var today = d;
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1; //January is 0! 
+    var yyyy = today.getFullYear();
+
+
+    
+    var hh = d.getHours();
+    var min = d.getMinutes();
+    var sec = d.getSeconds();
+
+
+    if (dd < 10) { dd = '0' + dd; }
+    if (mm < 10) { mm = '0' + mm; }
+    if (hh < 10) { hh = '0' + hh; }
+    if (min < 10) { min = '0' + min; }
+    if (sec < 10) { sec = '0' + sec; }
+
+    var today = dd + '/' + mm + '/' + yyyy + " " + hh+ ":" + min + ":" + sec;
+
+    return today;
 }
 

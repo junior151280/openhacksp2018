@@ -89,8 +89,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="css\images\bg.jpg" />
+    <Content Include="css\images\icoClose.png" />
     <Content Include="css\images\icoDelete.png" />
     <Content Include="css\images\icoGraphic.png" />
+    <Content Include="css\images\logo.jpg" />
     <Content Include="css\style.css" />
     <Content Include="Global.asax" />
     <None Include="nuget.config" />
@@ -108,7 +111,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\web.config" />
     <Content Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

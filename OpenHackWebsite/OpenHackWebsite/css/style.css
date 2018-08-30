@@ -1,24 +1,57 @@
 ﻿body {
-    background-color: #efefef;
-    margin: 20px;
+    background-color: #000000;
+    margin: 0px;
     font-family: Sans-serif;
     font-size: 12px;
+    background-image: url(images/bg.jpg);
+    background-size: cover;
 }
 
-.logoOpenHack {
-    width: 200px;
-    float: right;
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+    background-color: #fff;
+    width: 6px;
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+    background-color: #b3b3b3;
+    width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #b3b3b3;
+    width: 6px;
+}
+
+
+
+.logoOpenHack { width: 200px; float: right; }
+h1 { font-size: 35px; font-weight: bolder; float: left; margin: 5px; }
+.divMargin { margin:20px; }
+
+
+@media only screen and (max-width: 450px) {
+    .logoOpenHack { width: 150px;  }
+     h1 { font-size: 30px;}
+     .divMargin { margin:5px; }
 }
 
 
 .panel {
     background-color: #fff;
-    width: 500px;
+    max-width: 500px;
+    min-width: 300px;
     margin: 10px auto;
     border-radius: 5px;
     padding: 20px;
     box-shadow: 1px 1px 1px #808080;
 }
+
+
 
 .graficoOnline {
     width: 300px;
@@ -28,9 +61,10 @@
 .btn {
     padding: 5px 10px;
     border-radius: 5px;
-    background-color: #fff;
-    border: 2px solid #efefef;
+    background-color: #f3f3f3;
+    border: 1px solid #efefef;
     float: right;
+    margin: 10px 0px 10px 10px;
 }
 
 .btn:hover {
@@ -63,7 +97,7 @@ tr:hover {
 }
 
 .header {
-    height:100px;
+    height: 50px;
 }
 
 .icoTable {
@@ -79,12 +113,17 @@ tr:hover {
 
 
 .newInstancePopUpPanel {
-    height: 60px;
+    height: 75px;
     width: 249px;
     margin: 150px auto;
     background-color: #fff;
     padding: 20px;
     border-radius: 5px;
+}
+
+.lastListUpdate {
+    float: left;
+    margin-top: 20px;
 }
 
 .graphicPopUpPanel {
@@ -110,6 +149,7 @@ tr:hover {
     border-radius: 5px;
     border: 1px solid #efefef;
     width: 100%;
+    margin: 5px 0px;
 }
 
 .icoDelete {
@@ -121,6 +161,16 @@ tr:hover {
     display: inline-block;
 }
 
+.icoClose {
+    background-image: url(images/icoClose.png);
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: right;
+}
+
 .icoStatus {
     background-image: url(images/icoGraphic.png);
     width: 20px;
@@ -128,4 +178,11 @@ tr:hover {
     background-size: contain;
     background-repeat: no-repeat;
     display: inline-block;
+}
+
+.scrollTable {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 200px;
+    width: 100%;
 }
